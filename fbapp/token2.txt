@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Date: Sun, 04 Sep 2022 08:19:25 GMT
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: Origin,Accept-Encoding
+Cache-control: no-cache, private
+Set-Cookie: fct=93ebc2b243eb4480ad7ce40a1f563a0a; Path=/; Secure; HttpOnly
+Set-Cookie: JSESSIONID=19990296D70AA4F1913D66084AFC7EB7.fitbit1; Path=/; Secure; HttpOnly
+Content-Language: ja-JP
+X-Frame-Options: SAMEORIGIN
+Via: 1.1 google
+CF-Cache-Status: DYNAMIC
+Server: cloudflare
+CF-RAY: 74554cd06d227821-NRT
+
+{"access_token":"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMzhSWkYiLCJzdWIiOiJCM1BDWVkiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJ3aHIgd251dCB3cHJvIHdzbGUgd3NvYyB3YWN0IHdveHkgd3RlbSB3d2VpIHdzZXQgd2xvYyB3cmVzIiwiZXhwIjoxNjYyMzA4MzY0LCJpYXQiOjE2NjIyNzk1NjR9.H7OXbhMYIi9A1QQtwOWN6STHC_fu3aQZWnI0RKTT1Xc","expires_in":28800,"refresh_token":"34cc0e5cbde9f378a7c69a5a637ad9b67b599385fb7ed3760fe94412b65ba238","scope":"oxygen_saturation nutrition sleep activity weight heartrate social settings location temperature profile respiratory_rate","token_type":"Bearer","user_id":"B3PCYY"}
