@@ -1,0 +1,18 @@
+https://api.fitbit.com/oauth2/token
+HTTP/1.1 200 OK
+Date: Wed, 05 Oct 2022 06:27:45 GMT
+Content-Type: application/json;charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Vary: Origin,Accept-Encoding
+Cache-control: no-cache, private
+Set-Cookie: fct=11497e297eaa4416a9afb8ababd42a30; Path=/; Secure; HttpOnly
+Set-Cookie: JSESSIONID=2FEE46A88B65ECBA28A292C775B1191E.fitbit1; Path=/; Secure; HttpOnly
+Content-Language: ja-JP
+X-Frame-Options: SAMEORIGIN
+Via: 1.1 google
+CF-Cache-Status: DYNAMIC
+Server: cloudflare
+CF-RAY: 755417ddbb39af87-NRT
+
+{"access_token":"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMzhXUzgiLCJzdWIiOiJCNzVEUkwiLCJpc3MiOiJGaXRiaXQiLCJ0eXAiOiJhY2Nlc3NfdG9rZW4iLCJzY29wZXMiOiJ3aHIgd3NsZSB3c2V0IHdhY3Qgd3JlcyB3b3h5IiwiZXhwIjoxNjY0OTgwMDY1LCJpYXQiOjE2NjQ5NTEyNjV9.bhhfaYmuBKOZuTGaAFLpuTM8wIS0DhLpzWHgjGzYk5M","expires_in":28800,"refresh_token":"7edaddf24ac51d5b0075f7fc1f5f3c65c828c7f9c97488265c118bcf0d33101c","scope":"respiratory_rate sleep settings activity oxygen_saturation heartrate","token_type":"Bearer","user_id":"B75DRL"}
