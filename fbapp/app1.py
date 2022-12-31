@@ -15,8 +15,8 @@ matplotlib.use('Qt4Agg')
 plt.ion()
 
 # A target date and user
-DATE = "2022-12-14"
-user = 3
+DATE = "2022-12-19"
+user = 1
 #print(type(DATE))
 
 # ID, Token
