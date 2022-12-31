@@ -10,10 +10,13 @@ import pyhrv.frequency_domain as fd
 import pyhrv.time_domain as td
 from scipy import interpolate
 import biosppy
+import matplotlib
+matplotlib.use('Qt4Agg')
+plt.ion()
 
 # A target date and user
 DATE = "2022-12-14"
-user = 4
+user = 3
 #print(type(DATE))
 
 # ID, Token
@@ -21,22 +24,22 @@ if user == 1:
     user_id = "fitbit_1"
     CLIENT_ID = "238RZF"
     CLIENT_SECRET = "379bdd55f5df0674fc423011c69aab8d"
-    TOKEN_FILE = "/content/drive/MyDrive/研究/Data/Tokens/token.txt"
+    TOKEN_FILE = "./Tokens/token.txt"
 elif user == 2:
     user_id = "fitbit_2"
     CLIENT_ID = "238WS8"
     CLIENT_SECRET = "06fc5a18824f4dd8801729eca707cf72"
-    TOKEN_FILE = "/content/drive/MyDrive/研究/Data/Tokens/token2.txt"
+    TOKEN_FILE = "./Tokens/token2.txt"
 elif user == 3:
     user_id = "fitbit_3"
     CLIENT_ID = "238YPR"
     CLIENT_SECRET = "239a671f62b2813e9a4a7a8c4540c21b"
-    TOKEN_FILE = "/content/drive/MyDrive/研究/Data/Tokens/token3.txt"
+    TOKEN_FILE = "./Tokens/token3.txt"
 else:
     user_id = "fitbit_4"
     CLIENT_ID = "23923D"
     CLIENT_SECRET = "1e60e3fe6195a024c91da05809f1aead"
-    TOKEN_FILE = "/content/drive/MyDrive/研究/Data/Tokens/token4.txt"
+    TOKEN_FILE = "./Tokens/token4.txt"
 
 tokens = open(TOKEN_FILE).read()
 token_dict = literal_eval(tokens)
@@ -61,7 +64,7 @@ heart_sec[:10]
 
 df = pd.DataFrame.from_dict(heart_sec)
 print("the number of data_sets = " + str(df.shape[0]))
-mean = df["value"].mean().round(2)
+mean = round(df["value"].mean(), 2)
 print("mean of heartrates = " + str(mean))
 
 # Plot
@@ -122,7 +125,10 @@ for i in range(itr):
 #print(results['ar_resampling_frequency'])
 #print(type(df["time"][0]))
 
-df.to_csv(f'/content/drive/MyDrive/研究/Data/CSV/{user_id}_{DATE}.csv')
+df.to_csv(f'./CSV/{user_id}_{DATE}.csv')
+
+df2 = df.dropna()
+df2.to_csv(f'./CSV/{user_id}_{DATE}_dropna.csv')
 
 #BPM
 steps = 300
@@ -134,11 +140,8 @@ ax.set_ylabel("heart-rate")
 ax.plot(df["time"], df["value"], label = "BPM")
 plt.xticks(x_label[::steps], df["time"][::steps], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'/content/drive/MyDrive/研究/Data/PNG/{user_id}_{DATE}_BPM.png')
+plt.savefig(f'./PNG/{user_id}_{DATE}_BPM.png')
 plt.show()
-
-df2 = df.dropna()
-df2.to_csv(f'/content/drive/MyDrive/研究/Data/CSV/{user_id}_{DATE}_dropna.csv')
 
 #LF/HF
 x_label = np.arange(0, len(df2))
@@ -149,7 +152,7 @@ ax.set_ylabel("lf/hf")
 ax.plot(df2["time"], df2["ratio"], '-o', label = "LF/HF")
 plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'/content/drive/MyDrive/研究/Data/PNG/{user_id}_{DATE}_LFHF.png')
+plt.savefig(f'./PNG/{user_id}_{DATE}_LFHF.png')
 plt.show()
 
 #SDNN
@@ -161,7 +164,7 @@ ax.set_ylabel("sndd")
 ax.plot(df2["time"], df2["sdnn"], '-o', label = "SDNN")
 plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'/content/drive/MyDrive/研究/Data/PNG/{user_id}_{DATE}_SDNN.png')
+plt.savefig(f'./PNG/{user_id}_{DATE}_SDNN.png')
 plt.show()
 
 #rMSSD
@@ -173,7 +176,7 @@ ax.set_ylabel("rmssd")
 ax.plot(df2["time"], df2["rmssd"], '-o', label = "rMSSD")
 plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'/content/drive/MyDrive/研究/Data/PNG/{user_id}_{DATE}_rMSSD.png')
+plt.savefig(f'./PNG/{user_id}_{DATE}_rMSSD.png')
 plt.show()
 
 #BPM_mean
