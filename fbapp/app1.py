@@ -11,7 +11,7 @@ import pyhrv.time_domain as td
 from scipy import interpolate
 import biosppy
 import matplotlib
-matplotlib.use('Qt4Agg')
+matplotlib.use('Qt5Agg')
 plt.ion()
 
 # A target date and user
@@ -103,6 +103,7 @@ print(lfhf_res.head(10))
 df["ratio"] = np.nan
 df["sdnn"] = np.nan
 df["rmssd"] = np.nan
+df["hf"] = np.nan
 #df["mean_bpm"] = np.nan 
 slc = 100
 itr = int(len(df["RRI"]) / slc) - 1
@@ -130,6 +131,19 @@ df.to_csv(f'./CSV/{user_id}_{DATE}.csv')
 df2 = df.dropna()
 df2.to_csv(f'./CSV/{user_id}_{DATE}_dropna.csv')
 
+#LF/HF
+x_label = np.arange(0, len(df2))
+fig, ax = plt.subplots(figsize=(30,10))
+ax.set_title(DATE + "   " + user_id)
+ax.set_xlabel("time")
+ax.set_ylabel("lf/hf")
+ax.plot(df2["time"], df2["ratio"], '-o', label = "LF/HF")
+plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
+plt.legend(loc = 'best')
+plt.savefig(f'./HF/{user_id}_{DATE}_LFHF.png')
+plt.show()
+
+'''
 #BPM
 steps = 300
 x_label = np.arange(0, len(df))
@@ -180,7 +194,6 @@ plt.savefig(f'./PNG/{user_id}_{DATE}_rMSSD.png')
 plt.show()
 
 #BPM_mean
-'''
 x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
