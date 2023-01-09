@@ -11,8 +11,9 @@ import pyhrv.time_domain as td
 from scipy import interpolate
 import biosppy
 import matplotlib
-matplotlib.use('Qt5Agg')
-plt.ion()
+matplotlib.use('Agg')
+#matplotlib.use('Qt5Agg')
+#plt.ion()
 
 # A target date and user
 DATE = "2022-12-19"
@@ -63,9 +64,9 @@ heart_sec[:10]
 # Process
 
 df = pd.DataFrame.from_dict(heart_sec)
-print("the number of data_sets = " + str(df.shape[0]))
+#print("the number of data_sets = " + str(df.shape[0]))
 mean = round(df["value"].mean(), 2)
-print("mean of heartrates = " + str(mean))
+#print("mean of heartrates = " + str(mean))
 
 # Plot
 """
@@ -84,6 +85,7 @@ df["decrease"] = -df["change"].mask(df["change"] > -4, 0)
 df = df.assign(
     RRI=lambda df: (60 / df["value"] * 1000).round(2)
 )
+#print(df.head())
 '''
 lfhf_res = df.assign(
         timestamp=lambda df: pd.to_datetime(df["time"])
@@ -98,31 +100,34 @@ lfhf_res = df.resample('5min').apply(
         lambda x: fd.ar_psd(nni=x, mode='dev')[0]['ar_ratio']
     )
 print(lfhf_res.head(10))
-
 '''
 
-df["ratio"] = np.nan
+df["hf"] = np.nan
+df["lf/hf"] = np.nan
 df["sdnn"] = np.nan
 df["rmssd"] = np.nan
-df["hf"] = np.nan
+
 #df["mean_bpm"] = np.nan 
-slc = 50
-itr = int(len(df["RRI"]) / slc) - 1
 
 #itr2 = int(len(df["value"])/6) - 1
 #for i in range(5, itr2, 3):
 #    df.at[i, "mean_bpm"] = np.mean(df["value"][i-6:i])
+diff = 50 # a number of gathered samples
+diff2 = 2 # must be a divisor of diff or add 1 to gap
+gap = int(diff/diff2) + 1
+itr = int(len(df["RRI"])/diff2) - gap
 
-for i in range(itr):
-    #results = fd.ar_psd(nni = df["RRI"][slc*i:slc*(i+1)])
-    #df.at[slc*(i+1), "ratio"] = results['ar_ratio']
-    results = fd.welch_psd(nni = df["RRI"][slc*i:slc*(i+1)], show = False)
-    df.at[slc*(i+1), "ratio"] = results['fft_ratio']
-    df.at[slc*(i+1), "hf"] = results['fft_abs'][1]
-    sdnn = td.sdnn(nni = df["RRI"][slc*i:slc*(i+1)])
-    df.at[slc*(i+1), "sdnn"] = float(sdnn[0])
-    rmssd = td.rmssd(nni = df["RRI"][slc*i:slc*(i+1)])
-    df.at[slc*(i+1), "rmssd"] = float(rmssd[0])
+for i in range(0, itr):
+    #results = fd.ar_psd(nni = df["RRI"][index-50):index])
+    #df.at[index, "ratio"] = results['ar_ratio']
+    index = i*diff2 + diff
+    results = fd.welch_psd(nni = df["RRI"][(index-diff):index], show = False)
+    df.at[index, "lf/hf"] = results['fft_ratio']
+    df.at[index, "hf"] = results['fft_abs'][1]
+    sdnn = td.sdnn(nni = df["RRI"][(index-diff):index])
+    df.at[index, "sdnn"] = float(sdnn[0])
+    rmssd = td.rmssd(nni = df["RRI"][(index-diff):index])
+    df.at[index, "rmssd"] = float(rmssd[0])
     #print(sdnn[0], rmssd[0])
 #print(df.head(205))
 #print(results['ar_resampling_frequency'])
@@ -134,20 +139,10 @@ df.to_csv(f'./CSV/{user_id}_{DATE}.csv')
 df2 = df.dropna()
 df2.to_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
 
-#HF
-x_label = np.arange(0, len(df2))
-fig, ax = plt.subplots(figsize=(30,10))
-ax.set_title(DATE + "   " + user_id)
-ax.set_xlabel("time")
-ax.set_ylabel("hf")
-ax.plot(df2["time"], df2["hf"], '-o', label = "HF")
-plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
-plt.legend(loc = 'best')
-plt.savefig(f'./HF/{user_id}_{DATE}_HF.png')
-#plt.show()
+steps = 300
+steps2 = 50
 
 #BPM
-steps = 300
 x_label = np.arange(0, len(df))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
@@ -159,14 +154,26 @@ plt.legend(loc = 'best')
 plt.savefig(f'./BPM/{user_id}_{DATE}_BPM.png')
 #plt.show()
 
+#HF
+x_label = np.arange(0, len(df2))
+fig, ax = plt.subplots(figsize=(30,10))
+ax.set_title(DATE + "   " + user_id)
+ax.set_xlabel("time")
+ax.set_ylabel("hf")
+ax.plot(df2["time"], df2["hf"], label = "HF")
+plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
+plt.legend(loc = 'best')
+plt.savefig(f'./HF/{user_id}_{DATE}_HF.png')
+#plt.show()
+
 #LF/HF
 x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("lf/hf")
-ax.plot(df2["time"], df2["ratio"], '-o', label = "LF/HF")
-plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
+ax.plot(df2["time"], df2["lf/hf"], label = "LF/HF")
+plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./LFHF/{user_id}_{DATE}_LFHF.png')
 #plt.show()
@@ -177,8 +184,8 @@ fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("sndd")
-ax.plot(df2["time"], df2["sdnn"], '-o', label = "SDNN")
-plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
+ax.plot(df2["time"], df2["sdnn"], label = "SDNN")
+plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./SDNN/{user_id}_{DATE}_SDNN.png')
 #plt.show()
@@ -189,11 +196,13 @@ fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("rmssd")
-ax.plot(df2["time"], df2["rmssd"], '-o', label = "rMSSD")
-plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
+ax.plot(df2["time"], df2["rmssd"], label = "rMSSD")
+plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./rMSSD/{user_id}_{DATE}_rMSSD.png')
 #plt.show()
+
+print(f"Done -> {user_id}_{DATE}")
 
 '''
 #BPM_mean
