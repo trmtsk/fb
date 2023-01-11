@@ -16,8 +16,8 @@ matplotlib.use('Agg')
 #plt.ion()
 
 # A target date and user
-DATE = "2022-12-19"
-user = 1
+DATE = "2022-12-15"
+user = 3
 #print(type(DATE))
 
 # ID, Token
