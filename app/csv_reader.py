@@ -11,7 +11,9 @@ import pyhrv.time_domain as td
 from scipy import interpolate
 import biosppy
 import matplotlib
+import matplotlib.style as mplstyle
 matplotlib.use('Agg')
+mplstyle.use('fast')
 #matplotlib.use('Qt5Agg')
 #plt.ion()
 
@@ -45,72 +47,70 @@ else:
 df = pd.read_csv(f'./CSV/{user_id}_{DATE}.csv')
 df2 = pd.read_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
 
-'''
+step = 5
+
+dff = 200
+itr_bpm = int(len(df)/dff) - 1
 #BPM
-for i in range(0, (len(df)-5)):
-    x_label = np.arange(0, 5)
+for i in range(0, itr_bpm):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("heart-rate")
-    ax.plot(df["time"][i:i+5], df["value"][i:i+5], label = "BPM")
-    plt.xticks(x_label[::], df["time"][::], rotation=60)
+    ax.plot(df["time"][i*dff:i*dff+dff], df["value"][i*dff:i*dff+dff], label = "BPM")
+    plt.xticks(df["time"][i*dff:i*dff+dff:step], rotation=60)
     plt.legend(loc = 'best')
-    plt.savefig(f'./tmp/{user_id}_{DATE}_BPM_short.png')
+    plt.savefig(f'./BPMshort/{user_id}_{DATE}_BPM_s{i}.png')
     #plt.show()
-'''
+
 diff = 100
 itr = int(len(df2)/diff) - 1
 #HF
 for i in range(0, itr):
-    x_label = np.arange(0, diff)
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("hf")
     ax.plot(df2["time"][i*diff:i*diff+diff], df2["hf"][i*diff:i*diff+diff], label = "HF")
-    plt.xticks(rotation=60)
+    plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
-    plt.savefig(f'./tmp/{user_id}_{DATE}_HF_short{i}.png')
+    plt.savefig(f'./HFshort/{user_id}_{DATE}_HF_s{i}.png')
     #plt.show()
 
 #LF/HF
 for i in range(0, itr):
-    x_label = np.arange(0, diff)
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("lf/hf")
     ax.plot(df2["time"][i*diff:i*diff+diff], df2["lf/hf"][i*diff:i*diff+diff], label = "LF/HF")
-    plt.xticks(x_label, df2["time"], rotation=60)
+    plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
-    plt.savefig(f'./tmp/{user_id}_{DATE}_LFHF_short{i}.png')
+    plt.savefig(f'./LFHFshort/{user_id}_{DATE}_LFHF_s{i}.png')
     #plt.show()
 
 #SDNN
 for i in range(0, itr):
-    x_label = np.arange(0, diff)
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("sndd")
     ax.plot(df2["time"][i*diff:i*diff+diff], df2["sdnn"][i*diff:i*diff+diff], label = "SDNN")
-    plt.xticks(x_label, df2["time"], rotation=60)
+    plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
-    plt.savefig(f'./tmp/{user_id}_{DATE}_SDNN_short{i}.png')
+    plt.savefig(f'./SDNNshort/{user_id}_{DATE}_SDNN_s{i}.png')
     #plt.show()
 
 #rMSSD
 for i in range(0, itr):
-    x_label = np.arange(0, diff)
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("rmssd")
     ax.plot(df2["time"][i*diff:i*diff+diff], df2["rmssd"][i*diff:i*diff+diff], label = "rMSSD")
-    plt.xticks(x_label, df2["time"], rotation=60)
+    plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
-    plt.savefig(f'./tmp/{user_id}_{DATE}_rMSSD_short{i}.png')
+    plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD_s{i}.png')
     #plt.show()
 
-print(f"Done -> {user_id}_{DATE}")
+print(f"Done -> {user_id}_{DATE}_short")

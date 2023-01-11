@@ -11,6 +11,8 @@ import pyhrv.time_domain as td
 from scipy import interpolate
 import biosppy
 import matplotlib
+import matplotlib.style as mplstyle
+mplstyle.use('fast')
 matplotlib.use('Agg')
 #matplotlib.use('Qt5Agg')
 #plt.ion()
@@ -143,61 +145,56 @@ steps = 300
 steps2 = 50
 
 #BPM
-x_label = np.arange(0, len(df))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("heart-rate")
 ax.plot(df["time"], df["value"], label = "BPM")
-plt.xticks(x_label[::steps], df["time"][::steps], rotation=60)
+plt.xticks(df["time"][::steps], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./BPMshort/{user_id}_{DATE}_BPM.png')
 #plt.show()
 
 #HF
-x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("hf")
 ax.plot(df2["time"], df2["hf"], label = "HF")
-plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
+plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./HFshort/{user_id}_{DATE}_HF.png')
 #plt.show()
 
 #LF/HF
-x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("lf/hf")
 ax.plot(df2["time"], df2["lf/hf"], label = "LF/HF")
-plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
+plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./LFHFshort/{user_id}_{DATE}_LFHF.png')
 #plt.show()
 
 #SDNN
-x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("sndd")
 ax.plot(df2["time"], df2["sdnn"], label = "SDNN")
-plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
+plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./SDNNshort/{user_id}_{DATE}_SDNN.png')
 #plt.show()
 
 #rMSSD
-x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
 ax.set_ylabel("rmssd")
 ax.plot(df2["time"], df2["rmssd"], label = "rMSSD")
-plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
+plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
 plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD.png')
 #plt.show()
@@ -206,7 +203,6 @@ print(f"Done -> {user_id}_{DATE}")
 
 '''
 #BPM_mean
-x_label = np.arange(0, len(df2))
 fig, ax = plt.subplots(figsize=(30,10))
 ax.set_title(DATE + "   " + user_id)
 ax.set_xlabel("time")
