@@ -151,7 +151,7 @@ ax.set_ylabel("heart-rate")
 ax.plot(df["time"], df["value"], label = "BPM")
 plt.xticks(x_label[::steps], df["time"][::steps], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./BPM/{user_id}_{DATE}_BPM.png')
+plt.savefig(f'./BPMshort/{user_id}_{DATE}_BPM.png')
 #plt.show()
 
 #HF
@@ -163,7 +163,7 @@ ax.set_ylabel("hf")
 ax.plot(df2["time"], df2["hf"], label = "HF")
 plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./HF/{user_id}_{DATE}_HF.png')
+plt.savefig(f'./HFshort/{user_id}_{DATE}_HF.png')
 #plt.show()
 
 #LF/HF
@@ -175,7 +175,7 @@ ax.set_ylabel("lf/hf")
 ax.plot(df2["time"], df2["lf/hf"], label = "LF/HF")
 plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./LFHF/{user_id}_{DATE}_LFHF.png')
+plt.savefig(f'./LFHFshort/{user_id}_{DATE}_LFHF.png')
 #plt.show()
 
 #SDNN
@@ -187,7 +187,7 @@ ax.set_ylabel("sndd")
 ax.plot(df2["time"], df2["sdnn"], label = "SDNN")
 plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./SDNN/{user_id}_{DATE}_SDNN.png')
+plt.savefig(f'./SDNNshort/{user_id}_{DATE}_SDNN.png')
 #plt.show()
 
 #rMSSD
@@ -199,7 +199,7 @@ ax.set_ylabel("rmssd")
 ax.plot(df2["time"], df2["rmssd"], label = "rMSSD")
 plt.xticks(x_label[::steps2], df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./rMSSD/{user_id}_{DATE}_rMSSD.png')
+plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD.png')
 #plt.show()
 
 print(f"Done -> {user_id}_{DATE}")
