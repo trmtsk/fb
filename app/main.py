@@ -18,8 +18,8 @@ matplotlib.use('Agg')
 #plt.ion()
 
 # A target date and user
-DATE = "2022-12-15"
-user = 3
+DATE = "2022-12-17"
+user = 1
 #print(type(DATE))
 
 # ID, Token
@@ -61,67 +61,46 @@ authd_client = fitbit.Fitbit(CLIENT_ID, CLIENT_SECRET, access_token = access_tok
 # Getting heart rates
 data_sec = authd_client.intraday_time_series('activities/heart', DATE, detail_level = '1sec') #'1sec', '1min', or '15min'
 heart_sec = data_sec["activities-heart-intraday"]["dataset"]
-heart_sec[:10]
 
 # Process
 
 df = pd.DataFrame.from_dict(heart_sec)
 #print("the number of data_sets = " + str(df.shape[0]))
 mean = round(df["value"].mean(), 2)
-#print("mean of heartrates = " + str(mean))
 
-# Plot
-"""
-steps = 60
-x_label = np.arange(0, len(df["time"]))
-fig, ax = plt.subplots(figsize=(30,10))
-ax.set_title(DATE + "   " + user_id)
-ax.set_xlabel("time")
-ax.set_ylabel("value")
+#datetime
+DATE_f = DATE + " 00:00:00"
+df["index_sec"] = 0
+#df["index_t"] = datetime.datetime.strptime(DATE_f, '%Y-%m-%d %H:%M:%S')
 
-df["change"] = df["value"].diff()
-df["decrease"] = -df["change"].mask(df["change"] > -4, 0)
-"""
+
+for i in range(len(df.time)):
+    str = DATE + " " + df.time[i]
+    dte = datetime.datetime.strptime(str, '%Y-%m-%d %H:%M:%S')
+    sec = int(dte.hour*3600 +dte.minute*60 + dte.second)
+    df.iat[i,2] = sec
+    #df.iat[i,3] = dte
+    
+print(df)
+
+
 
 #RRV
 df = df.assign(
     RRI=lambda df: (60 / df["value"] * 1000).round(2)
 )
-#print(df.head())
-'''
-lfhf_res = df.assign(
-        timestamp=lambda df: pd.to_datetime(df["time"])
-    ).set_index("timestamp")["RRI"].resample('15min')
-lfhf_res.to_csv(f'./tmp/{user_id}_{DATE}.csv')
-print(td.nni_parameters(df["RRI"]),"\n", type(lfhf_res))
-'''
-
-'''
-# LF/HF
-lfhf_res = df.resample('5min').apply(
-        lambda x: fd.ar_psd(nni=x, mode='dev')[0]['ar_ratio']
-    )
-print(lfhf_res.head(10))
-'''
 
 df["hf"] = np.nan
 df["lf/hf"] = np.nan
 df["sdnn"] = np.nan
 df["rmssd"] = np.nan
 
-#df["mean_bpm"] = np.nan 
-
-#itr2 = int(len(df["value"])/6) - 1
-#for i in range(5, itr2, 3):
-#    df.at[i, "mean_bpm"] = np.mean(df["value"][i-6:i])
 diff = 50 # a number of gathered samples
 diff2 = 2 # must be a divisor of diff or add 1 to gap
 gap = int(diff/diff2) + 1
 itr = int(len(df["RRI"])/diff2) - gap
 
-for i in range(0, itr):
-    #results = fd.ar_psd(nni = df["RRI"][index-50):index])
-    #df.at[index, "ratio"] = results['ar_ratio']
+for i in range(itr):
     index = i*diff2 + diff
     results = fd.welch_psd(nni = df["RRI"][(index-diff):index], show = False)
     df.at[index, "lf/hf"] = results['fft_ratio']
@@ -130,10 +109,6 @@ for i in range(0, itr):
     df.at[index, "sdnn"] = float(sdnn[0])
     rmssd = td.rmssd(nni = df["RRI"][(index-diff):index])
     df.at[index, "rmssd"] = float(rmssd[0])
-    #print(sdnn[0], rmssd[0])
-#print(df.head(205))
-#print(results['ar_resampling_frequency'])
-#print(type(df["time"][0]))
 
 #CSV
 df.to_csv(f'./CSV/{user_id}_{DATE}.csv')
@@ -200,16 +175,3 @@ plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD.png')
 #plt.show()
 
 print(f"Done -> {user_id}_{DATE}")
-
-'''
-#BPM_mean
-fig, ax = plt.subplots(figsize=(30,10))
-ax.set_title(DATE + "   " + user_id)
-ax.set_xlabel("time")
-ax.set_ylabel("rmssd")
-ax.plot(df2["time"], df2["rmssd"], '-o', label = "rMSSD")
-plt.xticks(x_label[::3], df2["time"][::3], rotation=60)
-plt.legend(loc = 'best')
-plt.savefig(f'/content/drive/MyDrive/研究/Data/PNG/{user_id}_{DATE}_rMSSD.png')
-#plt.show()
-'''

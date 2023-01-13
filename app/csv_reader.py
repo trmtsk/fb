@@ -12,6 +12,7 @@ from scipy import interpolate
 import biosppy
 import matplotlib
 import matplotlib.style as mplstyle
+from sklearn.linear_model import LinearRegression
 matplotlib.use('Agg')
 mplstyle.use('fast')
 #matplotlib.use('Qt5Agg')
@@ -114,3 +115,44 @@ for i in range(0, itr):
     #plt.show()
 
 print(f"Done -> {user_id}_{DATE}_short")
+
+x = df2["time"]
+y = df2["hf"]
+data = np.array(0,6)
+
+n=len(x)
+t_xy=sum(x*y)-(1/n)*sum(x)*sum(y)
+t_xx=sum(x**2)-(1/n)*sum(x)**2
+slope=t_xy/t_xx
+intercept=(1/n)*sum(y)-(1/n)*slope*sum(x)
+print('傾き=',slope,'切片=',intercept)
+predict_x=intercept+slope*x
+print('予測値=',predict_x)
+resudial_y=y-predict_x
+print('残差=',resudial_y)
+predict_d=intercept+slope*data
+print('x=[0,6] --> y=',predict_d)
+
+fit = np.polyfit(x, y, 1)
+print('[傾き,切片]=', fit)
+func = np.poly1d(fit)
+predict_x = func(x)
+print('予測値=', predict_x)
+resudial_y = y-predict_x
+print('残差=', resudial_y)
+predict_d = func(data)
+print('x=[0,6] --> y=', predict_d)
+
+'''
+lr = LinearRegression()
+X = x.reshape((len(x), 1))
+lr.fit(X, y)
+print('傾き=',lr.coef_, '切片=', lr.intercept_)
+predict_x = lr.predict(X)
+print('予測値=', predict_x)
+resudial_y = y-predict_x
+print('残差=', resudial_y)
+D = data.reshape((len(data), 1))
+predict_d = lr.predict(D)
+print('x=[0,6] --> y=', predict_d)
+'''
