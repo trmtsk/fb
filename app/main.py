@@ -12,13 +12,15 @@ from scipy import interpolate
 import biosppy
 import matplotlib
 import matplotlib.style as mplstyle
+import time
 mplstyle.use('fast')
 matplotlib.use('Agg')
 #matplotlib.use('Qt5Agg')
 #plt.ion()
+time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-17"
+DATE = "2022-12-18"
 user = 1
 #print(type(DATE))
 
@@ -73,17 +75,12 @@ DATE_f = DATE + " 00:00:00"
 df["index_sec"] = 0
 #df["index_t"] = datetime.datetime.strptime(DATE_f, '%Y-%m-%d %H:%M:%S')
 
-
 for i in range(len(df.time)):
     str = DATE + " " + df.time[i]
     dte = datetime.datetime.strptime(str, '%Y-%m-%d %H:%M:%S')
     sec = int(dte.hour*3600 +dte.minute*60 + dte.second)
     df.iat[i,2] = sec
     #df.iat[i,3] = dte
-    
-print(df)
-
-
 
 #RRV
 df = df.assign(
@@ -111,6 +108,7 @@ for i in range(itr):
     df.at[index, "rmssd"] = float(rmssd[0])
 
 #CSV
+print(df)
 df.to_csv(f'./CSV/{user_id}_{DATE}.csv')
 
 df2 = df.dropna()
@@ -127,7 +125,7 @@ ax.set_ylabel("heart-rate")
 ax.plot(df["time"], df["value"], label = "BPM")
 plt.xticks(df["time"][::steps], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./BPMshort/{user_id}_{DATE}_BPM.png')
+plt.savefig(f'./BPM/{user_id}_{DATE}_BPM.png')
 #plt.show()
 
 #HF
@@ -138,7 +136,7 @@ ax.set_ylabel("hf")
 ax.plot(df2["time"], df2["hf"], label = "HF")
 plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./HFshort/{user_id}_{DATE}_HF.png')
+plt.savefig(f'./HF/{user_id}_{DATE}_HF.png')
 #plt.show()
 
 #LF/HF
@@ -149,7 +147,7 @@ ax.set_ylabel("lf/hf")
 ax.plot(df2["time"], df2["lf/hf"], label = "LF/HF")
 plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./LFHFshort/{user_id}_{DATE}_LFHF.png')
+plt.savefig(f'./LFHF/{user_id}_{DATE}_LFHF.png')
 #plt.show()
 
 #SDNN
@@ -160,7 +158,7 @@ ax.set_ylabel("sndd")
 ax.plot(df2["time"], df2["sdnn"], label = "SDNN")
 plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./SDNNshort/{user_id}_{DATE}_SDNN.png')
+plt.savefig(f'./SDNN/{user_id}_{DATE}_SDNN.png')
 #plt.show()
 
 #rMSSD
@@ -171,7 +169,11 @@ ax.set_ylabel("rmssd")
 ax.plot(df2["time"], df2["rmssd"], label = "rMSSD")
 plt.xticks(df2["time"][::steps2], rotation=60)
 plt.legend(loc = 'best')
-plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD.png')
+plt.savefig(f'./rMSSD/{user_id}_{DATE}_rMSSD.png')
 #plt.show()
 
+time_end = time.time()
+time_diff = int(time_start - time_end)
+
 print(f"Done -> {user_id}_{DATE}")
+print(f"time -> {int(time_diff/60)}m{time_diff%60}s")

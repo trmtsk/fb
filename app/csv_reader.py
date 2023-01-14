@@ -12,11 +12,12 @@ from scipy import interpolate
 import biosppy
 import matplotlib
 import matplotlib.style as mplstyle
-from sklearn.linear_model import LinearRegression
+import time
 matplotlib.use('Agg')
 mplstyle.use('fast')
 #matplotlib.use('Qt5Agg')
 #plt.ion()
+time_start = time.time()
 
 # A target date and user
 DATE = "2022-12-17"
@@ -52,6 +53,7 @@ step = 5
 
 dff = 200
 itr_bpm = int(len(df)/dff) - 1
+
 #BPM
 for i in range(0, itr_bpm):
     fig, ax = plt.subplots(figsize=(30,10))
@@ -66,6 +68,7 @@ for i in range(0, itr_bpm):
 
 diff = 100
 itr = int(len(df2)/diff) - 1
+
 #HF
 for i in range(0, itr):
     fig, ax = plt.subplots(figsize=(30,10))
@@ -77,7 +80,7 @@ for i in range(0, itr):
     plt.legend(loc = 'best')
     plt.savefig(f'./HFshort/{user_id}_{DATE}_HF_s{i}.png')
     #plt.show()
-
+'''
 #LF/HF
 for i in range(0, itr):
     fig, ax = plt.subplots(figsize=(30,10))
@@ -113,46 +116,40 @@ for i in range(0, itr):
     plt.legend(loc = 'best')
     plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD_s{i}.png')
     #plt.show()
+'''
 
+# Conventional algorithm with HF
+df3 = df2.iloc[0:diff, :]
+x = df3.index_sec[0:diff]
+y = df3.hf[0:diff]
+#data = np.array(0,6)
+y_half = int(diff/2) 
+
+n = len(x)
+t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+t_xx = sum(x**2)-(1/n)*sum(x)**2
+slope = round(t_xy/t_xx, 2)
+mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
+mean_y2 = sum(y[y_half:])/y_half
+increase_rate = round(mean_y2/mean_y1, 2)
+
+print('increase rate = ', increase_rate)
+print('slope = ', slope)
+
+if slope > 1.2 and increase_rate > 1.7:
+    print('***Up trend***')
+else:
+    print('***None***')
+
+time_end = time.time()
+time_diff = int(time_start - time_end)
 print(f"Done -> {user_id}_{DATE}_short")
+print(f"time -> {int(time_diff/60)}m{time_diff%60}s")
 
-x = df2["time"]
-y = df2["hf"]
-data = np.array(0,6)
+# Conventional algorithm with BPM
 
-n=len(x)
-t_xy=sum(x*y)-(1/n)*sum(x)*sum(y)
-t_xx=sum(x**2)-(1/n)*sum(x)**2
-slope=t_xy/t_xx
-intercept=(1/n)*sum(y)-(1/n)*slope*sum(x)
-print('傾き=',slope,'切片=',intercept)
-predict_x=intercept+slope*x
-print('予測値=',predict_x)
-resudial_y=y-predict_x
-print('残差=',resudial_y)
-predict_d=intercept+slope*data
-print('x=[0,6] --> y=',predict_d)
+# New algorithm with BPM
 
-fit = np.polyfit(x, y, 1)
-print('[傾き,切片]=', fit)
-func = np.poly1d(fit)
-predict_x = func(x)
-print('予測値=', predict_x)
-resudial_y = y-predict_x
-print('残差=', resudial_y)
-predict_d = func(data)
-print('x=[0,6] --> y=', predict_d)
+# New algorithm with HF
 
-'''
-lr = LinearRegression()
-X = x.reshape((len(x), 1))
-lr.fit(X, y)
-print('傾き=',lr.coef_, '切片=', lr.intercept_)
-predict_x = lr.predict(X)
-print('予測値=', predict_x)
-resudial_y = y-predict_x
-print('残差=', resudial_y)
-D = data.reshape((len(data), 1))
-predict_d = lr.predict(D)
-print('x=[0,6] --> y=', predict_d)
-'''
+# # New algorithm with all components
