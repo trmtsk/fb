@@ -15,14 +15,12 @@ import matplotlib.style as mplstyle
 import time
 mplstyle.use('fast')
 matplotlib.use('Agg')
-#matplotlib.use('Qt5Agg')
 #plt.ion()
 time_start = time.time()
 
 # A target date and user
 DATE = "2022-12-18"
 user = 1
-#print(type(DATE))
 
 # ID, Token
 if user == 1:
@@ -82,7 +80,7 @@ for i in range(len(df.time)):
     df.iat[i,2] = sec
     #df.iat[i,3] = dte
 
-#RRV
+# Setting RRI
 df = df.assign(
     RRI=lambda df: (60 / df["value"] * 1000).round(2)
 )
@@ -92,8 +90,8 @@ df["lf/hf"] = np.nan
 df["sdnn"] = np.nan
 df["rmssd"] = np.nan
 
-diff = 50 # a number of gathered samples
-diff2 = 2 # must be a divisor of diff or add 1 to gap
+diff = 50   # a number of gathered samples
+diff2 = 2   # must be a divisor of diff or add 1 to gap
 gap = int(diff/diff2) + 1
 itr = int(len(df["RRI"])/diff2) - gap
 

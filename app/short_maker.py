@@ -22,7 +22,6 @@ time_start = time.time()
 # A target date and user
 DATE = "2022-12-17"
 user = 1
-#print(type(DATE))
 
 # ID, Token
 if user == 1:
@@ -60,7 +59,10 @@ for i in range(0, itr_bpm):
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("heart-rate")
-    ax.plot(df["time"][i*dff:i*dff+dff], df["value"][i*dff:i*dff+dff], label = "BPM")
+    x = df["time"][i*dff:i*dff+dff]
+    y = df["value"][i*dff:i*dff+dff]
+    ax.set_ylim(0, y.max()+10)
+    ax.plot(x, y, label = "BPM")
     plt.xticks(df["time"][i*dff:i*dff+dff:step], rotation=60)
     plt.legend(loc = 'best')
     plt.savefig(f'./BPMshort/{user_id}_{DATE}_BPM_s{i}.png')
@@ -75,19 +77,25 @@ for i in range(0, itr):
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("hf")
-    ax.plot(df2["time"][i*diff:i*diff+diff], df2["hf"][i*diff:i*diff+diff], label = "HF")
+    x = df2["time"][i*diff:i*diff+diff]
+    y = df2["hf"][i*diff:i*diff+diff]
+    ax.set_ylim(0, y.max()+100)
+    ax.plot(x, y, label = "HF")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
     plt.savefig(f'./HFshort/{user_id}_{DATE}_HF_s{i}.png')
     #plt.show()
-'''
+
 #LF/HF
 for i in range(0, itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("lf/hf")
-    ax.plot(df2["time"][i*diff:i*diff+diff], df2["lf/hf"][i*diff:i*diff+diff], label = "LF/HF")
+    x = df2["time"][i*diff:i*diff+diff]
+    y = df2["lf/hf"][i*diff:i*diff+diff]
+    ax.set_ylim(0, y.max()+3)
+    ax.plot(x, y, label = "LF/HF")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
     plt.savefig(f'./LFHFshort/{user_id}_{DATE}_LFHF_s{i}.png')
@@ -99,7 +107,10 @@ for i in range(0, itr):
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("sndd")
-    ax.plot(df2["time"][i*diff:i*diff+diff], df2["sdnn"][i*diff:i*diff+diff], label = "SDNN")
+    x = df2["time"][i*diff:i*diff+diff]
+    y = df2["sdnn"][i*diff:i*diff+diff]
+    ax.set_ylim(0, y.max()+10)
+    ax.plot(x, y, label = "SDNN")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
     plt.savefig(f'./SDNNshort/{user_id}_{DATE}_SDNN_s{i}.png')
@@ -111,45 +122,16 @@ for i in range(0, itr):
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("rmssd")
-    ax.plot(df2["time"][i*diff:i*diff+diff], df2["rmssd"][i*diff:i*diff+diff], label = "rMSSD")
+    x = df2["time"][i*diff:i*diff+diff]
+    y =df2["rmssd"][i*diff:i*diff+diff]
+    ax.set_ylim(0, y.max()+5)
+    ax.plot(x, y, label = "rMSSD")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
     plt.savefig(f'./rMSSDshort/{user_id}_{DATE}_rMSSD_s{i}.png')
     #plt.show()
-'''
-
-# Conventional algorithm with HF
-df3 = df2.iloc[0:diff, :]
-x = df3.index_sec[0:diff]
-y = df3.hf[0:diff]
-#data = np.array(0,6)
-y_half = int(diff/2) 
-
-n = len(x)
-t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
-t_xx = sum(x**2)-(1/n)*sum(x)**2
-slope = round(t_xy/t_xx, 2)
-mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
-mean_y2 = sum(y[y_half:])/y_half
-increase_rate = round(mean_y2/mean_y1, 2)
-
-print('increase rate = ', increase_rate)
-print('slope = ', slope)
-
-if slope > 1.2 and increase_rate > 1.7:
-    print('***Up trend***')
-else:
-    print('***None***')
 
 time_end = time.time()
 time_diff = int(time_start - time_end)
 print(f"Done -> {user_id}_{DATE}_short")
 print(f"time -> {int(time_diff/60)}m{time_diff%60}s")
-
-# Conventional algorithm with BPM
-
-# New algorithm with BPM
-
-# New algorithm with HF
-
-# # New algorithm with all components
