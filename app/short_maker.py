@@ -70,7 +70,7 @@ for i in range(0, itr_bpm):
     #plt.show()
 
 diff = 100
-itr = int(len(df2)/diff) - 1
+itr = int(len(df2)/diff)
 
 #HF
 y_max = df2.hf.max()
@@ -90,7 +90,7 @@ for i in range(itr):
 
 #LF/HF
 y_max = df2['lf/hf'].max()
-for i in range(0, itr):
+for i in range(itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
@@ -106,7 +106,7 @@ for i in range(0, itr):
 
 #SDNN
 y_max = df2.sdnn.max()
-for i in range(0, itr):
+for i in range(itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
@@ -122,7 +122,7 @@ for i in range(0, itr):
 
 #rMSSD
 y_max = df2.rmssd.max()
-for i in range(0, itr):
+for i in range(itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")

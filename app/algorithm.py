@@ -124,7 +124,44 @@ for i in range(len(decrease)):
     print(f'stop time = {df.time[stop[i][1]]}\n')
 
 # New algorithm with BPM
+s = 0
+dff = 200
+dff2 = 6
+df4 = df.iloc[0:dff, :]
+#y_half = int(dff/2)
+threshold = df4.value[s*dff] + 10
+down_trend = False
+counter = 0
+bpm_info = np.zeros((100,3), dtype = int) # start, stop, amount of decrease
+start = []
+stop = []
+decrease = []
+itr = int(len(df4.value)/dff2)
 
+for i in range(itr):
+    x = df4.index_sec[i*dff2:i*dff2+dff2]
+    y = df4.value[i*dff2:i*dff2+dff2].rolling(5).mean().fillna(df.value[i*dff2+5])
+    n = len(x)
+    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+    t_xx = sum(x**2)-(1/n)*sum(x)**2
+    #print(t_xy, t_xx)
+    slope = round(t_xy/t_xx, 2)
+    mean = y[i*dff2]
+    
+    if slope < 0 and down_trend == False and threshold < mean:
+        down_trend = True
+        basis = mean
+        #bpm_info[counter][0] = basis
+        start.append((basis, i*dff2))
+    elif slope >= 0 and down_trend == True:
+        #bpm_info[counter][1] = mean
+        #bpm_info[counter][2] = basis - mean
+        stop.append((mean, i*dff2))
+        decrease.append(basis - mean)
+        #counter += 1
+        down_trend = False
+    else:
+        pass
 
 # New algorithm with HF
 
