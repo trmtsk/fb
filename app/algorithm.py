@@ -13,6 +13,7 @@ import biosppy
 import matplotlib
 import matplotlib.style as mplstyle
 import time
+import math
 matplotlib.use('Agg')
 mplstyle.use('fast')
 #matplotlib.use('Qt5Agg')
@@ -72,16 +73,68 @@ if slope > 1.2 and increase_rate > 1.7:
     print('***Up trend***')
 else:
     print('***None***')
-
-time_end = time.time()
-time_diff = int(time_start - time_end)
-print(f"Done -> {user_id}_{DATE}_short")
-print(f"time -> {int(time_diff/60)}m{time_diff%60}s")
+print()
 
 # Conventional algorithm with BPM
+s = 0
+dff = 200
+dff2 = 6
+df4 = df.iloc[0:dff, :]
+#y_half = int(dff/2)
+threshold = df4.value[s*dff] + 10
+down_trend = False
+counter = 0
+bpm_info = np.zeros((100,3), dtype = int) # start, stop, amount of decrease
+start = []
+stop = []
+decrease = []
+itr = int(len(df4.value)/dff2)
+
+for i in range(itr):
+    x = df4.index_sec[i*dff2:i*dff2+dff2]
+    y = df4.value[i*dff2:i*dff2+dff2]
+    n = len(x)
+    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+    t_xx = sum(x**2)-(1/n)*sum(x)**2
+    #print(t_xy, t_xx)
+    slope = round(t_xy/t_xx, 2)
+    mean = y[i*dff2]
+    
+    if slope < 0 and down_trend == False and threshold < mean:
+        down_trend = True
+        basis = mean
+        #bpm_info[counter][0] = basis
+        start.append((basis, i*dff2))
+    elif slope >= 0 and down_trend == True:
+        #bpm_info[counter][1] = mean
+        #bpm_info[counter][2] = basis - mean
+        stop.append((mean, i*dff2))
+        decrease.append(basis - mean)
+        #counter += 1
+        down_trend = False
+    else:
+        pass
+
+#bpm_info_nonzero = bpm_info.nonzero()
+#print(bpm_info_nonzero)
+#print(start, stop, decrease)
+for i in range(len(decrease)):
+    print(f'start = {start[i][0]}, stop = {stop[i][0]}, amount of decrease = {decrease[i]}')
+    print(f'start time = {df.time[start[i][1]]}')
+    print(f'stop time = {df.time[stop[i][1]]}\n')
 
 # New algorithm with BPM
 
+
 # New algorithm with HF
 
+
 # # New algorithm with all components
+
+
+# time_end
+time_end = time.time()
+time_diff = int(time_start - time_end)
+
+print(f"Done -> {user_id}_{DATE}_short")
+print(f"time -> {int(time_diff/60)}m{time_diff%60}s")

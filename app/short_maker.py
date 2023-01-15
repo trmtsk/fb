@@ -54,6 +54,7 @@ dff = 200
 itr_bpm = int(len(df)/dff) - 1
 
 #BPM
+y_max = df.value.max()
 for i in range(0, itr_bpm):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
@@ -61,7 +62,7 @@ for i in range(0, itr_bpm):
     ax.set_ylabel("heart-rate")
     x = df["time"][i*dff:i*dff+dff]
     y = df["value"][i*dff:i*dff+dff]
-    ax.set_ylim(0, y.max()+10)
+    ax.set_ylim(0, y_max+10)
     ax.plot(x, y, label = "BPM")
     plt.xticks(df["time"][i*dff:i*dff+dff:step], rotation=60)
     plt.legend(loc = 'best')
@@ -72,14 +73,15 @@ diff = 100
 itr = int(len(df2)/diff) - 1
 
 #HF
-for i in range(0, itr):
+y_max = df2.hf.max()
+for i in range(itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
     ax.set_xlabel("time")
     ax.set_ylabel("hf")
     x = df2["time"][i*diff:i*diff+diff]
     y = df2["hf"][i*diff:i*diff+diff]
-    ax.set_ylim(0, y.max()+100)
+    ax.set_ylim(0, y_max+100)
     ax.plot(x, y, label = "HF")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
@@ -87,6 +89,7 @@ for i in range(0, itr):
     #plt.show()
 
 #LF/HF
+y_max = df2['lf/hf'].max()
 for i in range(0, itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
@@ -94,7 +97,7 @@ for i in range(0, itr):
     ax.set_ylabel("lf/hf")
     x = df2["time"][i*diff:i*diff+diff]
     y = df2["lf/hf"][i*diff:i*diff+diff]
-    ax.set_ylim(0, y.max()+3)
+    ax.set_ylim(0, y_max+3)
     ax.plot(x, y, label = "LF/HF")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
@@ -102,6 +105,7 @@ for i in range(0, itr):
     #plt.show()
 
 #SDNN
+y_max = df2.sdnn.max()
 for i in range(0, itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
@@ -109,7 +113,7 @@ for i in range(0, itr):
     ax.set_ylabel("sndd")
     x = df2["time"][i*diff:i*diff+diff]
     y = df2["sdnn"][i*diff:i*diff+diff]
-    ax.set_ylim(0, y.max()+10)
+    ax.set_ylim(0, y_max+10)
     ax.plot(x, y, label = "SDNN")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
@@ -117,6 +121,7 @@ for i in range(0, itr):
     #plt.show()
 
 #rMSSD
+y_max = df2.rmssd.max()
 for i in range(0, itr):
     fig, ax = plt.subplots(figsize=(30,10))
     ax.set_title(DATE + "   " + user_id)
@@ -124,7 +129,7 @@ for i in range(0, itr):
     ax.set_ylabel("rmssd")
     x = df2["time"][i*diff:i*diff+diff]
     y =df2["rmssd"][i*diff:i*diff+diff]
-    ax.set_ylim(0, y.max()+5)
+    ax.set_ylim(0, y_max+5)
     ax.plot(x, y, label = "rMSSD")
     plt.xticks(df2["time"][i*diff:i*diff+diff:step], rotation=60)
     plt.legend(loc = 'best')
@@ -133,5 +138,6 @@ for i in range(0, itr):
 
 time_end = time.time()
 time_diff = int(time_start - time_end)
+
 print(f"Done -> {user_id}_{DATE}_short")
 print(f"time -> {int(time_diff/60)}m{time_diff%60}s")
