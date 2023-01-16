@@ -101,28 +101,31 @@ for i in range(len(decrease)):
 
 # Conventional algorithm with HF
 diff = 100
-df3 = df2.iloc[0:diff, :]
-x = df3.index_sec[0:diff]
-y = df3.hf[0:diff]
-#data = np.array(0,6)
-y_half = int(diff/2)
+print('New HF')
+itr = int(len(df3.hf)/diff)
+for i in range(itr):
+    df3 = df2.iloc[i*diff:i*diff+diff, :]
+    x = df3.index_sec[i*diff:i*diff+diff]
+    y = df3.hf[i*diff:i*diff+diff]
+    #data = np.array(0,6)
+    y_half = int(diff/2)
 
-n = len(x)
-t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
-t_xx = sum(x**2)-(1/n)*sum(x)**2
-slope = round(t_xy/t_xx, 2)
-mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
-mean_y2 = sum(y[y_half:])/y_half
-increase_rate = round(mean_y2/mean_y1, 2)
+    n = len(x)
+    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+    t_xx = sum(x**2)-(1/n)*sum(x)**2
+    slope = round(t_xy/t_xx, 2)
+    mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
+    mean_y2 = sum(y[y_half:])/y_half
+    increase_rate = round(mean_y2/mean_y1, 2)
 
-print('increase rate = ', increase_rate)
-print('slope = ', slope)
+    print('increase rate = ', increase_rate)
+    print('slope = ', slope)
 
-if slope > 1.2 and increase_rate > 1.7:
-    print('***Up trend***')
-else:
-    print('***None***')
-print()
+    if slope > 1.2 and increase_rate > 1.7:
+        print('***Up trend***')
+    else:
+        print('***None***')
+    print()
 
 
 # New algorithm with BPM
@@ -178,34 +181,73 @@ for i in range(len(decrease_n)):
 
 # New algorithm with HF
 diff = 100
-df3 = df2.iloc[0:diff, :]
-x = df3.index_sec[0:diff]
-y = df3.hf[0:diff]
-#data = np.array(0,6)
-y_half = int(diff/2)
+print('New HF')
+itr = int(len(df3.hf)/diff)
+for i in range(itr):
+    df3 = df2.iloc[i*diff:i*diff+diff, :]
+    x = df3.index_sec[i*diff:i*diff+diff]
+    y = df3.hf[i*diff:i*diff+diff]
+    #data = np.array(0,6)
+    y_half = int(diff/2)
 
-n = len(x)
-t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
-t_xx = sum(x**2)-(1/n)*sum(x)**2
-slope = round(t_xy/t_xx, 2)
-mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
-mean_y2 = sum(y[y_half:])/y_half
-increase_rate = round(mean_y2/mean_y1, 2)
+    n = len(x)
+    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+    t_xx = sum(x**2)-(1/n)*sum(x)**2
+    slope = round(t_xy/t_xx, 2)
+    mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
+    mean_y2 = sum(y[y_half:])/y_half
+    increase_rate = round(mean_y2/mean_y1, 2)
 
-print('increase rate = ', increase_rate)
-print('slope = ', slope)
+    print('increase rate = ', increase_rate)
+    print('slope = ', slope)
 
-if slope > 1.2 and increase_rate > 1.7:
-    print('***Up trend***')
-else:
-    print('***None***')
-print()
+    if slope > 1.2 and increase_rate > 1.7:
+        print('***Up trend***')
+    else:
+        print('***None***')
+    print()
 
 # New algorithm with SDNN
+print('New SDNN')
+itr = int(len(df3.sdnn)/diff)
+for i in range(itr):
+    diff = 100
+    df3 = df2.iloc[i*diff:i*diff+diff, :]
+    x = df3.index_sec[i*diff:i*diff+diff]
+    y = df3.sdnn[i*diff:i*diff+diff]
+    #data = np.array(0,6)
 
+    n = len(x)
+    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+    t_xx = sum(x**2)-(1/n)*sum(x)**2
+    slope = round(t_xy/t_xx, 2)
+
+    if slope > 1.2 and y.max() > 80:
+        print('***Up trend***  slope = ', slope)
+    else:
+        print('***None***  slope = ', slope)
+    print()
 
 # New algorithm with rMSSD
+print('New rMSSD')
+itr = int(len(df3.rmssd)/diff)
+for i in range(itr):
+    diff = 100
+    df3 = df2.iloc[i*diff:i*diff+diff, :]
+    x = df3.index_sec[i*diff:i*diff+diff]
+    y = df3.rmssd[i*diff:i*diff+diff]
+    #data = np.array(0,6)
 
+    n = len(x)
+    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
+    t_xx = sum(x**2)-(1/n)*sum(x)**2
+    slope = round(t_xy/t_xx, 2)
+
+    if slope > 1.2 and y.max() > 30:
+        print('***Up trend***  slope = ', slope)
+    else:
+        print('***None***  slope = ', slope)
+    print()
 
 # New algorithm with all components
 
