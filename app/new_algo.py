@@ -49,12 +49,20 @@ else:
 df = pd.read_csv(f'./CSV/{user_id}_{DATE}.csv')
 df2 = pd.read_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
 
+df['milestone'] = '' # index = 9
+df2['milestone'] = ''
+df['slope'] = 0 # 10
+df2['slope'] = 0
+df['decrease'] = 0 # 11
+df2['increase rate'] = 0
+df['kind'] = '' # 12
+df2['kind'] = ''
+
 # New algorithm with BPM
-print('***New***')
+#print('***New BPM***')
 s = 0
 dff = 200
 dff2 = 6
-df4 = df.iloc[0:dff, :]
 #y_half = int(dff/2)
 threshold = 85
 down_trend = False
@@ -63,11 +71,11 @@ down_trend = False
 start_n = []
 stop_n = []
 decrease_n = []
-itr = int(len(df4.value)/dff2)
+itr = int(len(df.value)/dff2)
 
 for i in range(itr):
-    x = df4.index_sec[i*dff2+4:i*dff2+4+dff2]
-    y = df4.value[i*dff2+4:i*dff2+4+dff2].rolling(5).mean().fillna(df.value[i*dff2+4])
+    x = df.index_sec[i*dff2+4:i*dff2+4+dff2]
+    y = df.value[i*dff2+4:i*dff2+4+dff2].rolling(5).mean().fillna(df.value[i*dff2+4])
     n = len(x)
     t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
     t_xx = sum(x**2)-(1/n)*sum(x)**2
@@ -82,6 +90,9 @@ for i in range(itr):
         #bpm_info2[counter][0] = basis
         start_n.append((basis, i*dff2+4))
         #print('  start')
+        df.iloc[i*dff2, 9] = 'start'
+        df.iloc[i*dff2, 10] = slope
+        df.iloc[i*dff2, 12] = 'BPM'
     elif slope >= 0.01 and down_trend == True:
         #bpm_info2[counter][1] = mean
         #bpm_info2[counter][2] = basis - mean
@@ -90,19 +101,23 @@ for i in range(itr):
         #counter += 1
         down_trend = False
         #print('  end')
+        df.iloc[i*dff2, 9] = 'stop'
+        df.iloc[i*dff2, 10] = slope
+        df.iloc[i*dff2, 11] = basis - mean
+        df.iloc[i*dff2, 12] = 'BPM'
     else:
         pass
-
+'''
 for i in range(len(decrease_n)):
     print(f'start = {start_n[i][0]}, stop = {stop_n[i][0]}, amount of decrease = {decrease_n[i]}')
     print(f'start time = {df.time[start_n[i][1]]}')
     print(f'stop time  = {df.time[stop_n[i][1]]}\n')
-
+'''
 #print(start, stop, start_n, stop_n)
 
 # New algorithm with HF
 diff = 100
-print('New HF')
+#print('New HF')
 itr = int(len(df2.hf)/diff)
 for i in range(itr):
     x = df2.index_sec[i*diff:i*diff+diff]
@@ -118,21 +133,24 @@ for i in range(itr):
     mean_y2 = sum(y[y_half:])/y_half
     increase_rate = round(mean_y2/mean_y1, 2)
 
-    print('increase rate = ', increase_rate)
-    print('slope = ', slope)
+    #print('increase rate = ', increase_rate)
+    #print('slope = ', slope)
 
     if slope > 1.2 and increase_rate > 1.7:
-        print('***Up trend***')
+        #print('***Up trend***')
+        df2.iloc[i*dff2, 9] = 'up trend'
+        df.iloc[i*dff2, 10] = slope
+        df2.iloc[i*dff2, 11] = increase_rate
+        df2.iloc[i*dff2, 12] = 'HF'
     else:
-        print('***None***')
-    print()
+        #print('***None***')
+        pass
 
 # New algorithm with SDNN
-print('New SDNN')
+#print('New SDNN')
 diff = 100
 itr = int(len(df2.sdnn)/diff)
 for i in range(itr):
-    
     x = df2.index_sec[i*diff:i*diff+diff]
     y = df2.sdnn[i*diff:i*diff+diff]
     #data = np.array(0,6)
@@ -143,13 +161,16 @@ for i in range(itr):
     slope = round(t_xy/t_xx, 2)
 
     if slope > 1.2 and y.max() > 80:
-        print('***Up trend***  slope = ', slope)
+        #print('***Up trend***  slope = ', slope)
+        df2.iloc[i*dff2, 9] = 'up trend'
+        df.iloc[i*dff2, 10] = slope
+        df2.iloc[i*dff2, 12] = 'SDNN'
     else:
-        print('***None***  slope = ', slope)
-    print()
+        #print('***None***  slope = ', slope)
+        pass
 
 # New algorithm with rMSSD
-print('New rMSSD')
+#print('New rMSSD')
 itr = int(len(df2.rmssd)/diff)
 for i in range(itr):
     x = df2.index_sec[i*diff:i*diff+diff]
@@ -162,13 +183,19 @@ for i in range(itr):
     slope = round(t_xy/t_xx, 2)
 
     if slope > 1.2 and y.max() > 30:
-        print('***Up trend***  slope = ', slope)
+        #print('***Up trend***  slope = ', slope)
+        df2.iloc[i*dff2, 9] = 'up trend'
+        df.iloc[i*dff2, 10] = slope
+        df2.iloc[i*dff2, 12] = 'rMSSD'
     else:
-        print('***None***  slope = ', slope)
-    print()
+        #print('***None***  slope = ', slope)
+        pass
 
 # New algorithm with all components
 
+# saveing to csv
+df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
+df2.to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
 
 # time_end
 time_end = time.time()
