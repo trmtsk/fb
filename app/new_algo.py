@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import datetime
 import matplotlib.dates as mdates
-from ast import literal_eval
 import pyhrv
 import pyhrv.frequency_domain as fd
 import pyhrv.time_domain as td
@@ -49,84 +48,6 @@ else:
 # Reading CSV
 df = pd.read_csv(f'./CSV/{user_id}_{DATE}.csv')
 df2 = pd.read_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
-
-
-# Conventional algorithm with BPM
-s = 0
-dff = 200
-dff2 = 6
-df4 = df.iloc[0:dff, :]
-#y_half = int(dff/2)
-threshold = df4.value[s*dff] + 10
-down_trend = False
-counter = 0
-bpm_info = np.zeros((100,3), dtype = int) # start, stop, amount of decrease
-start = []
-stop = []
-decrease = []
-itr = int(len(df4.value)/dff2)
-
-for i in range(itr):
-    x = df4.index_sec[i*dff2:i*dff2+dff2]
-    y = df4.value[i*dff2:i*dff2+dff2]
-    n = len(x)
-    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
-    t_xx = sum(x**2)-(1/n)*sum(x)**2
-    #print(t_xy, t_xx)
-    slope = round(t_xy/t_xx, 2)
-    mean = int(y[i*dff2])
-    
-    if slope < 0 and down_trend == False and threshold > mean:
-        down_trend = True
-        basis = mean
-        #bpm_info[counter][0] = basis
-        start.append((basis, i*dff2))
-    elif slope >= 0 and down_trend == True:
-        #bpm_info[counter][1] = mean
-        #bpm_info[counter][2] = basis - mean
-        stop.append((mean, i*dff2))
-        decrease.append(basis - mean)
-        #counter += 1
-        down_trend = False
-    else:
-        pass
-
-#bpm_info_nonzero = bpm_info.nonzero()
-#print(bpm_info_nonzero)
-#print(start, stop, decrease)
-for i in range(len(decrease)):
-    print(f'start = {start[i][0]}, stop = {stop[i][0]}, amount of decrease = {decrease[i]}')
-    print(f'start time = {df.time[start[i][1]]}')
-    print(f'stop time  = {df.time[stop[i][1]]}\n')
-
-# Conventional algorithm with HF
-diff = 100
-print('New HF')
-itr = int(len(df3.hf)/diff)
-for i in range(itr):
-    df3 = df2.iloc[i*diff:i*diff+diff, :]
-    x = df3.index_sec[i*diff:i*diff+diff]
-    y = df3.hf[i*diff:i*diff+diff]
-    #data = np.array(0,6)
-    y_half = int(diff/2)
-
-    n = len(x)
-    t_xy = sum(x*y)-(1/n)*sum(x)*sum(y)
-    t_xx = sum(x**2)-(1/n)*sum(x)**2
-    slope = round(t_xy/t_xx, 2)
-    mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
-    mean_y2 = sum(y[y_half:])/y_half
-    increase_rate = round(mean_y2/mean_y1, 2)
-
-    print('increase rate = ', increase_rate)
-    print('slope = ', slope)
-
-    if slope > 1.2 and increase_rate > 1.7:
-        print('***Up trend***')
-    else:
-        print('***None***')
-    print()
-
 
 # New algorithm with BPM
 print('***New***')
@@ -182,11 +103,10 @@ for i in range(len(decrease_n)):
 # New algorithm with HF
 diff = 100
 print('New HF')
-itr = int(len(df3.hf)/diff)
+itr = int(len(df2.hf)/diff)
 for i in range(itr):
-    df3 = df2.iloc[i*diff:i*diff+diff, :]
-    x = df3.index_sec[i*diff:i*diff+diff]
-    y = df3.hf[i*diff:i*diff+diff]
+    x = df2.index_sec[i*diff:i*diff+diff]
+    y = df2.hf[i*diff:i*diff+diff]
     #data = np.array(0,6)
     y_half = int(diff/2)
 
@@ -209,12 +129,12 @@ for i in range(itr):
 
 # New algorithm with SDNN
 print('New SDNN')
-itr = int(len(df3.sdnn)/diff)
+diff = 100
+itr = int(len(df2.sdnn)/diff)
 for i in range(itr):
-    diff = 100
-    df3 = df2.iloc[i*diff:i*diff+diff, :]
-    x = df3.index_sec[i*diff:i*diff+diff]
-    y = df3.sdnn[i*diff:i*diff+diff]
+    
+    x = df2.index_sec[i*diff:i*diff+diff]
+    y = df2.sdnn[i*diff:i*diff+diff]
     #data = np.array(0,6)
 
     n = len(x)
@@ -230,12 +150,10 @@ for i in range(itr):
 
 # New algorithm with rMSSD
 print('New rMSSD')
-itr = int(len(df3.rmssd)/diff)
+itr = int(len(df2.rmssd)/diff)
 for i in range(itr):
-    diff = 100
-    df3 = df2.iloc[i*diff:i*diff+diff, :]
-    x = df3.index_sec[i*diff:i*diff+diff]
-    y = df3.rmssd[i*diff:i*diff+diff]
+    x = df2.index_sec[i*diff:i*diff+diff]
+    y = df2.rmssd[i*diff:i*diff+diff]
     #data = np.array(0,6)
 
     n = len(x)
@@ -256,5 +174,5 @@ for i in range(itr):
 time_end = time.time()
 time_diff = int(time_start - time_end)
 
-print(f"Done -> {user_id}_{DATE}_short")
+print(f"Done -> {user_id}_{DATE}_new_algo")
 print(f"time -> {int(time_diff/60)}m{time_diff%60}s")
