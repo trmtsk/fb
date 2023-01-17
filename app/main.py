@@ -19,7 +19,7 @@ matplotlib.use('Agg')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-18"
+DATE = "2022-10-10"
 user = 1
 
 # ID, Token
@@ -66,7 +66,7 @@ heart_sec = data_sec["activities-heart-intraday"]["dataset"]
 
 df = pd.DataFrame.from_dict(heart_sec)
 #print("the number of data_sets = " + str(df.shape[0]))
-mean = round(df["value"].mean(), 2)
+#mean = round(df["value"].mean(), 2)
 
 #datetime
 DATE_f = DATE + " 00:00:00"
@@ -80,11 +80,8 @@ for i in range(len(df.time)):
     df.iat[i,2] = sec
     #df.iat[i,3] = dte
 
-# Setting RRI
-df = df.assign(
-    RRI=lambda df: (60 / df["value"] * 1000).round(2)
-)
-
+# Setting DF
+df = df.assign(RRI=lambda df: (60 / df["value"] * 1000).round(2))
 df["hf"] = np.nan
 df["lf/hf"] = np.nan
 df["sdnn"] = np.nan
@@ -106,7 +103,7 @@ for i in range(itr):
     df.at[index, "rmssd"] = float(rmssd[0])
 
 #CSV
-print(df)
+#print(df)
 df.to_csv(f'./CSV/{user_id}_{DATE}.csv')
 
 df2 = df.dropna()

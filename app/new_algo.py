@@ -20,8 +20,8 @@ mplstyle.use('fast')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-17"
-user = 1
+DATE = "2022-12-14"
+user = 3
 
 # ID, Token
 if user == 1:
@@ -48,15 +48,25 @@ else:
 # Reading CSV
 df = pd.read_csv(f'./CSV/{user_id}_{DATE}.csv')
 df2 = pd.read_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
+df3 = pd.read_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
+df4 = pd.read_csv(f'./CSV_dropna/{user_id}_{DATE}_dropna.csv')
 
 df['milestone'] = '' # index = 9
 df2['milestone'] = ''
+df3['milestone'] = ''
+df4['milestone'] = ''
 df['slope'] = 0 # 10
 df2['slope'] = 0
+df3['slope'] = 0
+df4['slope'] = 0
 df['decrease'] = 0 # 11
 df2['increase rate'] = 0
+df3['nan'] = ''
+df4['nan'] = ''
 df['kind'] = '' # 12
 df2['kind'] = ''
+df3['kind'] = ''
+df4['kind'] = ''
 
 # New algorithm with BPM
 #print('***New BPM***')
@@ -148,11 +158,11 @@ for i in range(itr):
 
 # New algorithm with SDNN
 #print('New SDNN')
-diff = 100
-itr = int(len(df2.sdnn)/diff)
+diff = 20
+itr = int(len(df3.sdnn)/diff)
 for i in range(itr):
-    x = df2.index_sec[i*diff:i*diff+diff]
-    y = df2.sdnn[i*diff:i*diff+diff]
+    x = df3.index_sec[i*diff:i*diff+diff]
+    y = df3.sdnn[i*diff:i*diff+diff]
     #data = np.array(0,6)
 
     n = len(x)
@@ -160,21 +170,21 @@ for i in range(itr):
     t_xx = sum(x**2)-(1/n)*sum(x)**2
     slope = round(t_xy/t_xx, 2)
 
-    if slope > 1.2 and y.max() > 80:
-        #print('***Up trend***  slope = ', slope)
-        df2.iloc[i*dff2, 9] = 'up trend'
-        df.iloc[i*dff2, 10] = slope
-        df2.iloc[i*dff2, 12] = 'SDNN'
+    if slope > 0.5 and y.max() > 80:
+        print('***Up trend***  slope = ', slope)
+        df3.iloc[i*dff2, 9] = 'up trend'
+        df3.iloc[i*dff2, 10] = slope
+        df3.iloc[i*dff2, 12] = 'SDNN'
     else:
         #print('***None***  slope = ', slope)
         pass
 
 # New algorithm with rMSSD
-#print('New rMSSD')
-itr = int(len(df2.rmssd)/diff)
+print('New rMSSD')
+itr = int(len(df4.rmssd)/diff)
 for i in range(itr):
-    x = df2.index_sec[i*diff:i*diff+diff]
-    y = df2.rmssd[i*diff:i*diff+diff]
+    x = df4.index_sec[i*diff:i*diff+diff]
+    y = df4.rmssd[i*diff:i*diff+diff]
     #data = np.array(0,6)
 
     n = len(x)
@@ -182,11 +192,11 @@ for i in range(itr):
     t_xx = sum(x**2)-(1/n)*sum(x)**2
     slope = round(t_xy/t_xx, 2)
 
-    if slope > 1.2 and y.max() > 30:
-        #print('***Up trend***  slope = ', slope)
-        df2.iloc[i*dff2, 9] = 'up trend'
-        df.iloc[i*dff2, 10] = slope
-        df2.iloc[i*dff2, 12] = 'rMSSD'
+    if slope > 0.1 and y.max() > 30:
+        print('***Up trend***  slope = ', slope)
+        df4.iloc[i*dff2, 9] = 'up trend'
+        df4.iloc[i*dff2, 10] = slope
+        df4.iloc[i*dff2, 12] = 'rMSSD'
     else:
         #print('***None***  slope = ', slope)
         pass
@@ -196,6 +206,8 @@ for i in range(itr):
 # saveing to csv
 df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
 df2.to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
+df3.to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
+df4.to_csv(f'./CSV_new/{user_id}_{DATE}_df4.csv', index=False)
 
 # time_end
 time_end = time.time()
