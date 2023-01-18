@@ -20,8 +20,8 @@ mplstyle.use('fast')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-14"
-user = 3
+DATE = "2022-12-18"
+user = 4
 
 # ID, Token
 if user == 1:
@@ -68,13 +68,16 @@ df2['kind'] = ''
 df3['kind'] = ''
 df4['kind'] = ''
 
+counter, counter2, counter3, counter4 = 0, 0, 0, 0
+
 # New algorithm with BPM
 #print('***New BPM***')
 s = 0
 dff = 200
 dff2 = 6
 #y_half = int(dff/2)
-threshold = 85
+threshold = df.value.mean()
+#print (threshold)
 down_trend = False
 #counter = 0
 #bpm_info2 = np.zeros((100,3), dtype = int) # start, stop, amount of decrease
@@ -94,7 +97,7 @@ for i in range(itr):
     #print(slope)
     mean = int(y[i*dff2+4])
     
-    if slope < -0.02 and down_trend == False and threshold > mean:
+    if slope < -0.4 and down_trend == False and threshold > mean:
         down_trend = True
         basis = mean
         #bpm_info2[counter][0] = basis
@@ -103,7 +106,7 @@ for i in range(itr):
         df.iloc[i*dff2, 9] = 'start'
         df.iloc[i*dff2, 10] = slope
         df.iloc[i*dff2, 12] = 'BPM'
-    elif slope >= 0.01 and down_trend == True:
+    elif slope >= 0.2 and down_trend == True:
         #bpm_info2[counter][1] = mean
         #bpm_info2[counter][2] = basis - mean
         stop_n.append((mean, i*dff2+4))
@@ -115,6 +118,7 @@ for i in range(itr):
         df.iloc[i*dff2, 10] = slope
         df.iloc[i*dff2, 11] = basis - mean
         df.iloc[i*dff2, 12] = 'BPM'
+        counter += 1
     else:
         pass
 '''
@@ -152,6 +156,7 @@ for i in range(itr):
         df.iloc[i*dff2, 10] = slope
         df2.iloc[i*dff2, 11] = increase_rate
         df2.iloc[i*dff2, 12] = 'HF'
+        counter2 += 1
     else:
         #print('***None***')
         pass
@@ -171,16 +176,17 @@ for i in range(itr):
     slope = round(t_xy/t_xx, 2)
 
     if slope > 0.5 and y.max() > 80:
-        print('***Up trend***  slope = ', slope)
+        #print('***Up trend***  slope = ', slope)
         df3.iloc[i*dff2, 9] = 'up trend'
         df3.iloc[i*dff2, 10] = slope
         df3.iloc[i*dff2, 12] = 'SDNN'
+        counter3 += 1
     else:
         #print('***None***  slope = ', slope)
         pass
 
 # New algorithm with rMSSD
-print('New rMSSD')
+#print('New rMSSD')
 itr = int(len(df4.rmssd)/diff)
 for i in range(itr):
     x = df4.index_sec[i*diff:i*diff+diff]
@@ -192,16 +198,19 @@ for i in range(itr):
     t_xx = sum(x**2)-(1/n)*sum(x)**2
     slope = round(t_xy/t_xx, 2)
 
-    if slope > 0.1 and y.max() > 30:
-        print('***Up trend***  slope = ', slope)
+    if slope > 0.15 and y.max() > 30:
+        #print('***Up trend***  slope = ', slope)
         df4.iloc[i*dff2, 9] = 'up trend'
         df4.iloc[i*dff2, 10] = slope
         df4.iloc[i*dff2, 12] = 'rMSSD'
+        counter4 += 1
     else:
         #print('***None***  slope = ', slope)
         pass
 
 # New algorithm with all components
+print(f'-new- bpm={counter}, hf={counter2}, sdnn={counter3}, rmssd={counter4}')
+
 
 # saveing to csv
 df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)

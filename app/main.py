@@ -19,7 +19,7 @@ matplotlib.use('Agg')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-10-10"
+DATE = "2022-12-06"
 user = 1
 
 # ID, Token

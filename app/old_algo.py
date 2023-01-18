@@ -20,8 +20,8 @@ mplstyle.use('fast')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-17"
-user = 1
+DATE = "2022-12-18"
+user = 4
 
 # ID, Token
 if user == 1:
@@ -86,6 +86,7 @@ for i in range(itr):
     if slope < 0 and down_trend == False and threshold > mean:
         down_trend = True
         basis = mean
+        #print('start')
         #bpm_info[counter][0] = basis
         start.append((basis, i*dff2))
         df.iloc[i*dff2, 9] = 'start'
@@ -97,12 +98,12 @@ for i in range(itr):
         #bpm_info[counter][2] = basis - mean
         stop.append((mean, i*dff2))
         decrease.append(basis - mean)
-        #counter += 1
+        counter += 1
         df.iloc[i*dff2, 9] = 'stop'
         df.iloc[i*dff2, 10] = slope
         df.iloc[i*dff2, 11] = basis - mean
         df.iloc[i*dff2, 12] = 'BPM'
-        
+        #print('stop')
     else:
         pass
 
@@ -117,7 +118,8 @@ for i in range(len(decrease)):
 '''
 
 # Conventional algorithm with HF
-diff = 100
+counter2 = 0
+diff = 40
 #print('old HF')
 itr = int(len(df2.hf)/diff)
 for i in range(itr):
@@ -137,17 +139,17 @@ for i in range(itr):
     #print('increase rate = ', increase_rate)
     #print('slope = ', slope)
 
-    if slope > 1.2 and increase_rate > 1.7:
+    if slope > 0 and increase_rate > 1.7:
         #print('***Up trend***')
         df2.iloc[i*dff2, 9] = 'up trend'
         df.iloc[i*dff2, 10] = slope
         df2.iloc[i*dff2, 11] = increase_rate
         df2.iloc[i*dff2, 12] = 'HF'
-
+        counter2 += 1
     else:
         #print('***None***')
         pass
-
+print(f'-old- bpm={counter}, hf={counter2} ')
 # saveing to csv
 df.to_csv(f'./CSV_old/{user_id}_{DATE}_df.csv', index=False)
 df2.to_csv(f'./CSV_old/{user_id}_{DATE}_df2.csv', index=False)
