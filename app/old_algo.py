@@ -55,8 +55,8 @@ df['slope'] = 0 # 10
 df2['slope'] = 0
 df['decrease'] = 0 # 11
 df2['increase rate'] = 0
-df['kind'] = '' # 12
-df2['kind'] = ''
+df['kind'] = np.nan # 12
+df2['kind'] = np.nan
 
 # Conventional algorithm with BPM
 #print('***old***')
@@ -151,8 +151,8 @@ for i in range(itr):
         pass
 print(f'-old- bpm={counter}, hf={counter2} ')
 # saveing to csv
-df.to_csv(f'./CSV_old/{user_id}_{DATE}_df.csv', index=False)
-df2.to_csv(f'./CSV_old/{user_id}_{DATE}_df2.csv', index=False)
+df.dropna(subset=['kind']).to_csv(f'./CSV_old/{user_id}_{DATE}_df.csv', index=False)
+df2.dropna(subset=['kind']).to_csv(f'./CSV_old/{user_id}_{DATE}_df2.csv', index=False)
 
 # time_end
 time_end = time.time()

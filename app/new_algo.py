@@ -63,10 +63,10 @@ df['decrease'] = 0 # 11
 df2['increase rate'] = 0
 df3['nan'] = ''
 df4['nan'] = ''
-df['kind'] = '' # 12
-df2['kind'] = ''
-df3['kind'] = ''
-df4['kind'] = ''
+df['kind'] = np.nan # 12
+df2['kind'] = np.nan
+df3['kind'] = np.nan
+df4['kind'] = np.nan
 
 counter, counter2, counter3, counter4 = 0, 0, 0, 0
 
@@ -213,10 +213,10 @@ print(f'-new- bpm={counter}, hf={counter2}, sdnn={counter3}, rmssd={counter4}')
 
 
 # saveing to csv
-df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
-df2.to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
-df3.to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
-df4.to_csv(f'./CSV_new/{user_id}_{DATE}_df4.csv', index=False)
+df.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
+df2.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
+df3.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
+df4.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df4.csv', index=False)
 
 # time_end
 time_end = time.time()
