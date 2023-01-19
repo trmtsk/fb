@@ -213,10 +213,29 @@ print(f'-new- bpm={counter}, hf={counter2}, sdnn={counter3}, rmssd={counter4}')
 
 
 # saveing to csv
-df.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
-df2.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
-df3.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
-df4.dropna(subset=['kind']).to_csv(f'./CSV_new/{user_id}_{DATE}_df4.csv', index=False)
+df = df.dropna(subset=['kind'])
+df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
+df2 = df2.dropna(subset=['kind'])
+df2.to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
+df3 = df3.dropna(subset=['kind'])
+df3.to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
+df4 = df4.dropna(subset=['kind'])
+df4.to_csv(f'./CSV_new/{user_id}_{DATE}_df4.csv', index=False)
+
+# writing to txt
+f = open('new.txt', 'a')
+
+f.write(f" -> {user_id}_{DATE}_new_algo\n")
+f.write('bpm\n')
+f.write(str(df.loc[:, 'time'])+'\n')
+f.write('hf\n')
+f.write(str(df2.loc[:, 'time'])+'\n')
+f.write('sdnn\n')
+f.write(str(df3.loc[:, 'time'])+'\n')
+f.write('rmssd\n')
+f.write(str(df4.loc[:, 'time'])+'\n\n')
+
+f.close()
 
 # time_end
 time_end = time.time()
