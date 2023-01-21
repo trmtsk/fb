@@ -20,8 +20,8 @@ mplstyle.use('fast')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-18"
-user = 4
+DATE = "2022-10-06"
+user = 1
 
 # ID, Token
 if user == 1:
@@ -119,7 +119,7 @@ for i in range(len(decrease)):
 
 # Conventional algorithm with HF
 counter2 = 0
-diff = 40
+diff = 10
 #print('old HF')
 itr = int(len(df2.hf)/diff)
 for i in range(itr):

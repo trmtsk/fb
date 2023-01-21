@@ -20,8 +20,8 @@ mplstyle.use('fast')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-18"
-user = 4
+DATE = "2022-12-14"
+user = 3
 
 # ID, Token
 if user == 1:
@@ -60,9 +60,9 @@ df2['slope'] = 0
 df3['slope'] = 0
 df4['slope'] = 0
 df['decrease'] = 0 # 11
-df2['increase rate'] = 0
-df3['nan'] = ''
-df4['nan'] = ''
+df2['decrease'] = ''
+df3['decrease'] = ''
+df4['decrease'] = ''
 df['kind'] = np.nan # 12
 df2['kind'] = np.nan
 df3['kind'] = np.nan
@@ -97,7 +97,7 @@ for i in range(itr):
     #print(slope)
     mean = int(y[i*dff2+4])
     
-    if slope < -0.4 and down_trend == False and threshold > mean:
+    if slope < -0.2 and down_trend == False and threshold > mean:
         down_trend = True
         basis = mean
         #bpm_info2[counter][0] = basis
@@ -130,7 +130,7 @@ for i in range(len(decrease_n)):
 #print(start, stop, start_n, stop_n)
 
 # New algorithm with HF
-diff = 100
+diff = 10
 #print('New HF')
 itr = int(len(df2.hf)/diff)
 for i in range(itr):
@@ -145,16 +145,14 @@ for i in range(itr):
     slope = round(t_xy/t_xx, 2)
     mean_y1 = sum(y[:y_half])/y_half # y_half must be an even number
     mean_y2 = sum(y[y_half:])/y_half
-    increase_rate = round(mean_y2/mean_y1, 2)
 
     #print('increase rate = ', increase_rate)
     #print('slope = ', slope)
 
-    if slope > 1.2 and increase_rate > 1.7:
+    if slope > 10 and y.mean() > df2.hf.mean()+1000:
         #print('***Up trend***')
         df2.iloc[i*dff2, 9] = 'up trend'
         df.iloc[i*dff2, 10] = slope
-        df2.iloc[i*dff2, 11] = increase_rate
         df2.iloc[i*dff2, 12] = 'HF'
         counter2 += 1
     else:
@@ -163,7 +161,6 @@ for i in range(itr):
 
 # New algorithm with SDNN
 #print('New SDNN')
-diff = 20
 itr = int(len(df3.sdnn)/diff)
 for i in range(itr):
     x = df3.index_sec[i*diff:i*diff+diff]
@@ -175,7 +172,7 @@ for i in range(itr):
     t_xx = sum(x**2)-(1/n)*sum(x)**2
     slope = round(t_xy/t_xx, 2)
 
-    if slope > 0.5 and y.max() > 80:
+    if slope > 0.5 and y.max() > df3.sdnn.mean():
         #print('***Up trend***  slope = ', slope)
         df3.iloc[i*dff2, 9] = 'up trend'
         df3.iloc[i*dff2, 10] = slope
@@ -198,7 +195,7 @@ for i in range(itr):
     t_xx = sum(x**2)-(1/n)*sum(x)**2
     slope = round(t_xy/t_xx, 2)
 
-    if slope > 0.15 and y.max() > 30:
+    if slope > 0.1 and y.max() > df4.rmssd.mean():
         #print('***Up trend***  slope = ', slope)
         df4.iloc[i*dff2, 9] = 'up trend'
         df4.iloc[i*dff2, 10] = slope
@@ -208,32 +205,47 @@ for i in range(itr):
         #print('***None***  slope = ', slope)
         pass
 
-# New algorithm with all components
 print(f'-new- bpm={counter}, hf={counter2}, sdnn={counter3}, rmssd={counter4}')
-
 
 # saveing to csv
 df = df.dropna(subset=['kind'])
-df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
 df2 = df2.dropna(subset=['kind'])
-df2.to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
 df3 = df3.dropna(subset=['kind'])
-df3.to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
 df4 = df4.dropna(subset=['kind'])
+
+df_concat = pd.concat([df, df2, df3, df4])
+df_concat = df_concat.reset_index(drop=True)
+df_concat.to_csv(f'./CSV_concat/{user_id}_{DATE}_concat.csv', index=False)
+
+# New algorithm with all components
+l = []
+for i in range(len(df_concat.index_sec)):
+    if df_concat.kind[i] == 'BPM' and df_concat.milestone[i] == 'start':
+        for j in range(len(df_concat.index_sec)):
+            if df_concat.kind[j] != 'BPM':
+                index_i = df_concat.index_sec[i]
+                index_j = df_concat.index_sec[j]
+                if index_i-1800 < index_j and index_i+1800 > index_j:
+                    print(df_concat.time[i], df_concat.time[j], df_concat.kind[j])
+                    if df_concat.time[i] not in l:
+                        l.append(df_concat.time[i])
+#print('\n', l)
+#print(f'count = {len(l)}\n')
+
+'''
+df.to_csv(f'./CSV_new/{user_id}_{DATE}_df.csv', index=False)
+df2.to_csv(f'./CSV_new/{user_id}_{DATE}_df2.csv', index=False)
+df3.to_csv(f'./CSV_new/{user_id}_{DATE}_df3.csv', index=False)
 df4.to_csv(f'./CSV_new/{user_id}_{DATE}_df4.csv', index=False)
+'''
 
 # writing to txt
+str_l = ', '.join(l)
 f = open('new.txt', 'a')
 
 f.write(f" -> {user_id}_{DATE}_new_algo\n")
-f.write('bpm\n')
-f.write(str(df.loc[:, 'time'])+'\n')
-f.write('hf\n')
-f.write(str(df2.loc[:, 'time'])+'\n')
-f.write('sdnn\n')
-f.write(str(df3.loc[:, 'time'])+'\n')
-f.write('rmssd\n')
-f.write(str(df4.loc[:, 'time'])+'\n\n')
+f.write(str_l + '\n')
+f.write('count = ' + str(len(l)) + '\n')
 
 f.close()
 
