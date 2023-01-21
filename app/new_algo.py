@@ -20,8 +20,8 @@ mplstyle.use('fast')
 time_start = time.time()
 
 # A target date and user
-DATE = "2022-12-14"
-user = 3
+DATE = "2022-12-18"
+user = 4
 
 # ID, Token
 if user == 1:
@@ -85,7 +85,7 @@ start_n = []
 stop_n = []
 decrease_n = []
 itr = int(len(df.value)/dff2)
-
+print(itr)
 for i in range(itr):
     x = df.index_sec[i*dff2+4:i*dff2+4+dff2]
     y = df.value[i*dff2+4:i*dff2+4+dff2].rolling(5).mean().fillna(df.value[i*dff2+4])
@@ -133,6 +133,7 @@ for i in range(len(decrease_n)):
 diff = 10
 #print('New HF')
 itr = int(len(df2.hf)/diff)
+print(itr)
 for i in range(itr):
     x = df2.index_sec[i*diff:i*diff+diff]
     y = df2.hf[i*diff:i*diff+diff]
